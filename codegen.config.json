@@ -1,0 +1,6 @@
+{
+  "basePackage": "pl.pjaworski.examplebackend",
+  "modelDir": "../docs",
+  "mainSourceRoot": "src/main/java",
+  "testSourceRoot": "src/test/java"
+}
