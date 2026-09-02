@@ -71,15 +71,18 @@ the fix. Follow it — do not "fix" the generated caller that broke.
 
 **Where logic lives.** Everything derivable is derived: passthrough field mapping
 (command -> event -> read model) is wired automatically by name. The ONLY place
-business logic lives is a `*Decider`, generated once per `[bracketed]` model field
-with an `UnsupportedOperationException` stub. Brackets in the model mark exactly
-what a human/GWT must decide.
+business logic lives is a `*Decider`: `check(cmd)` for preconditions (the business
+rules), plus one `UnsupportedOperationException` stub per `[bracketed]` model
+field. Brackets mark what must be DECIDED; a rule constrains a command and needs
+no bracket, no model change and no new class.
 
 **Adding behavior = TDD, never scaffolding.** Write the Spock test from the
-`gwt-*.md` scenario (`src/test/groovy/...`), run it, get a loud failure naming the
-exact decider method, implement it there. Use only the generated `*Ability` DSLs
+`gwt-*.md` scenario or from the business rule (`src/test/groovy/...`), run it, get
+a loud failure, implement it in the decider. Use only the generated `*Ability` DSLs
 (`issue_policy { }`, `expect_policy_document(id) { }`) — never construct handlers,
-projectors or repositories in a test.
+projectors or repositories in a test. **Every model doc — `commands.md`, `events.md`,
+`readmodels.md`, `uis.md`, `business-rules-raw.md` and every `gwt-*.md` — is
+read-only during development: a test is how a scenario gets written down.**
 
 A missing field or unknown event fails the generator loudly with a model error —
 fix the model, don't work around it in code.
