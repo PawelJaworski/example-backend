@@ -34,3 +34,8 @@ target/
 .project
 .settings
 .opencode
+
+### Codegen scratch (derived, never committed) ###
+.codegen/
+development-report.md
+api/openapi.json
