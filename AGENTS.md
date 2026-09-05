@@ -20,7 +20,25 @@ test abilities — regenerate them.
 ```
 node .opencode/skills/backend-development/scripts/codegen            # model (../docs/*.md) -> Java sources
 node .opencode/skills/backend-development/scripts/codegen --check    # CI gate: fail if generated code is stale
-node .opencode/skills/backend-development/scripts/codegen --json     # print the parsed model```
+node .opencode/skills/backend-development/scripts/codegen --patch    # model -> code diff as .codegen/patch/*.json
+node .opencode/skills/backend-development/scripts/codegen --json     # print the parsed model
+```
+
+**Drive the work, don't carry it.** `main-flow --next` returns ONE small prompt at a
+time; execute it and call again until `state: "DONE"`:
+
+```
+node .opencode/skills/backend-development/scripts/main-flow --next --json
+node .opencode/skills/backend-development/scripts/get-prompt.js <STEP> --item N  # one prompt, out of band
+```
+
+The model -> code diff is **computed by a script, never by an agent** — it is a pure
+function, and a non-deterministic answer would defeat the point of owning a generator.
+Every patch entry carries one of three verbs: **CREATE** (file absent — `codegen` writes
+it, never you), **ADD** (insert-only; nothing existing is read or rewritten), **UPDATE**
+(the only verb that may touch hand-written code, allowed **only when the build is red**,
+and only for the minimal edit that makes it green). `.codegen/` is derived scratch —
+never commit it.
 
 Source of truth: `../docs/{commands,events,readmodels}.md` +
 `business-definitions-raw.md`.
