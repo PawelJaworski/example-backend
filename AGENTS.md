@@ -1,163 +1,67 @@
 # AGENTS.md
 
-## Paths **Important:**
-ALWAYS apply this for the skills which need docs or eventModel directories.
-All configurable file/directory paths used by skills and agents. Skills and
-agents mentioned in the table below ALWAYS reference these instead of hardcoding paths — keep this section as the
-single source of truth. Individual files within each directory are referenced
-by their standard filenames (e.g. `commands.md` inside `eventModel`).
+## Paths
+| Key | Path | Used by |
+|-----|------|---------|
+| `docs` | `cd ../docs` | All skills and agents |
+| `eventModel` | `{docs}` | event-modelling, architect, development-team |
 
-| Key | Always use relative path | Always used by                                                                                    |
-|-----|--------------------------|---------------------------------------------------------------------------------------------------|
-| `docs` | `cd ../docs`             | business-rules-and-definitions, event-modelling, architect, backend-development, backend-implement, development-team |
-| `eventModel` | `{docs}`                 | event-modelling, architect, development-team                                                      |
-
-## Codegen — read this BEFORE writing any scaffolding by hand
-Scaffolding is **generated deterministically**, not written by an agent. Do not
-hand-write commands, events, read models, projectors, serde wrappers, enums or
-test abilities — regenerate them.
+## Codegen
+Scaffolding is **generated deterministically** by plugins — never hand-written.
 
 ```
-node .opencode/skills/backend-development/scripts/codegen            # model (../docs/*.md) -> Java sources
-node .opencode/skills/backend-development/scripts/codegen --check    # CI gate: fail if generated code is stale
-node .opencode/skills/backend-development/scripts/codegen --patch    # model -> code diff as .codegen/patch/*.json
-node .opencode/skills/backend-development/scripts/codegen --json     # print the parsed model
+node .opencode/skills/backend-development/scripts/codegen            # regenerate from model
+node .opencode/skills/backend-development/scripts/codegen --check    # CI gate: fail if stale
+node .opencode/skills/backend-development/scripts/codegen --patch    # model -> code diff
+node .opencode/skills/backend-development/scripts/codegen --json     # print parsed model
+node .opencode/skills/backend-development/scripts/codegen --next     # pick next step + render prompt
+node .opencode/skills/backend-development/scripts/codegen --prompt <STEP>  # render ONE prompt
+node .opencode/skills/backend-development/scripts/codegen --test     # print step machine
 ```
 
-**Drive the work, don't carry it.** `main-flow --next` returns ONE small prompt at a
-time; execute it and call again until `state: "DONE"`:
-
+**Drive the work, don't carry it:**
 ```
-node .opencode/skills/backend-development/scripts/main-flow --next --json
-node .opencode/skills/backend-development/scripts/get-prompt.js <STEP> --item N  # one prompt, out of band
+node .opencode/skills/backend-development/scripts/codegen --next --json
 ```
 
-The model -> code diff is **computed by a script, never by an agent** — it is a pure
-function, and a non-deterministic answer would defeat the point of owning a generator.
-Every patch entry carries one of three verbs: **CREATE** (file absent — `codegen` writes
-it, never you), **ADD** (insert-only; nothing existing is read or rewritten), **UPDATE**
-(the only verb that may touch hand-written code, allowed **only when the build is red**,
-and only for the minimal edit that makes it green). `.codegen/` is derived scratch —
-never commit it.
+Source of truth: `../docs/{commands,events,readmodels}.md` + `business-definitions-raw.md`.
 
-Source of truth: `../docs/{commands,events,readmodels}.md` +
-`business-definitions-raw.md`.
-
-**API contract.** After every codegen run that touched a command or read model, export
-the OpenAPI contract the frontend consumes:
-
+**API contract.** After codegen touches a command or read model, export OpenAPI:
 ```
-mvn verify            # boots the app on ${openapi.export.port}, writes api/openapi.json
+mvn verify            # boots app, writes api/openapi.json
 ```
+Never commit `api/openapi.json`; regenerate it.
 
-It is scraped from the running controllers (`/v3/api-docs`), so it is stale the moment the
-model changes. The generator does not produce it — `scripts/codegen` is a pure
-model -> source transform and knows nothing about Maven or Spring. **Never commit
-`api/openapi.json`;** regenerate it, say that it changed, and leave it in the working tree.
-
-The generator is **not in this repo** — it lives in the reusable skill
-`.opencode/skills/backend-development/scripts/codegen` so the same pipeline serves
-every domain. The only project-specific input is `codegen.config.json` at the root.
-
-**An `ADVISORY` from `--check` is not a "sync the file" task.** It lists hand-owned files
-whose logic diverges from the model, prints the model's version for comparison, and still
-exits `up to date`. The agent MAY add a member the model has and the file lacks, and MAY
-make the minimal edit that restores compilation after a model change. The agent MUST NOT
-rewrite an existing member's body to match the model — that is the developer's logic and
-the developer's decision. Report that drift; do not resolve it.
-
-**File ownership — the only rule that matters:**| header | ownership |
-|---|---|
-| `// GENERATED by ... DO NOT EDIT` | **Contract** (public shape) is generator-owned: class signature, public method names/signatures, interfaces, package. **Implementation** (method bodies, private members) is the agent's: rewrite freely, add private methods/fields, create helper classes. The agent is responsible for compilation. Exception: `// PRESERVED-BY-HAND: <reason>` declares a deliberate deviation; `--check` tolerates it. |
-| `// SCAFFOLDED ONCE ... this file is YOURS` | yours (`*Decider`, plus the event-sourcing runtime). Never touched again. |
+**Advisory from `--check`** lists hand-owned files whose logic diverges from the model.
+The agent MAY add a missing member. The agent MUST NOT rewrite existing logic.
+Report drift; do not resolve it.
 
 ## Ad-hoc extensions (no model change)
-Not every request is a model change. "Add a search criterion", "add a repository
-query", "filter/sort this endpoint" are **implementation improvements over fields the
-read model already has**. For those:
+Implementation improvements over existing fields — not model changes.
 
-- Do **not** edit `../docs/*.md`, the diagram, or `scripts/codegen/*` — nothing in the
-  event model changes.
-- They are still **TDD**: write the Spock spec first, watch it fail, then write the
-  minimal code. Ad-hoc is about scope, never about skipping the test.
-- The code goes into the slice's generated projector/repository as **added** members.
-  The add-only merge preserves them across every future regeneration.
-- A new *field* or a new *event* is NOT ad-hoc — that is a model change, owned by the
-  architect. Escalate it.
-- Gates are unchanged: `scripts/codegen --check` must still report `up to date`, and
-  re-run `mvn verify` if a route or parameter changed.
+- Do **not** edit `../docs/*.md` or `scripts/codegen/*`
+- Still **TDD**: Spock spec first, then minimal code
+- Code goes into the slice's generated projector/repository as **added** members
+- A new *field* or *event* is NOT ad-hoc — escalate to architect
+- `scripts/codegen --check` must still report `up to date`
 
-Full recipe, including the traps: `.opencode/skills/backend-development/reference/ad-hoc-extensions.md`.
+## Adding behavior
+**TDD, never scaffolding.** Write the Spock test from the `gwt-*.md` scenario or
+business rule, run it, get a loud failure, implement in the decider.
 
-`once` files carry a `scaffold-version:` marker; if one predates its template the
-generator fails `--check` with a `STALE SCAFFOLD` report that names the file and
-the fix. Follow it — do not "fix" the generated caller that broke.
-
-**Where logic lives.** Everything derivable is derived: passthrough field mapping
-(command -> event -> read model) is wired automatically by name. The ONLY place
-business logic lives is a `*Decider`: `check(cmd)` for preconditions (the business
-rules), plus one `UnsupportedOperationException` stub per `[bracketed]` model
-field. Brackets mark what must be DECIDED; a rule constrains a command and needs
-no bracket, no model change and no new class.
-
-**Adding behavior = TDD, never scaffolding.** Write the Spock test from the
-`gwt-*.md` scenario or from the business rule (`src/test/groovy/...`), run it, get
-a loud failure, implement it in the decider. Use only the generated `*Ability` DSLs
-(`issue_policy { }`, `expect_policy_document(id) { }`) — never construct handlers,
-projectors or repositories in a test. **Every model doc — `commands.md`, `events.md`,
-`readmodels.md`, `uis.md`, `business-rules-raw.md` and every `gwt-*.md` — is
-read-only during development: a test is how a scenario gets written down.**
-
-A missing field or unknown event fails the generator loudly with a model error —
-fix the model, don't work around it in code.
-
-## Efficient exploration patterns
-- **Use glob for directory traversal**: Instead of reading directories one level at a time, use patterns like:
-  - `src/main/java/**/*.java` — all Java source files
-  - `src/main/java/pl/pjaworski/examplebackend/*/` — top-level packages
-  - `src/main/java/pl/pjaworski/examplebackend/**/` — all packages recursively
-- **Read docs in parallel**: When starting a task, read all relevant docs in one batch:
-  - `commands.md`, `events.md`, `readmodels.md`, `uis.md` (event modeling)
-  - `business-definitions-raw.md` (business definitions)
-- **Check existing code minimally**: Only read files directly related to the change. Don't explore empty directories or read every existing class.
-- **Batch writes**: Write all related files in parallel batches instead of one at a time.
-- **Verify once**: Run `mvn compile` and `mvn test` only after all files are written.
+Use only generated `*Ability` DSLs — never construct handlers, projectors or
+repositories in a test. Model docs are **read-only** during development.
 
 ## Build / test
-- `./mvnw` works (`.mvn/wrapper/maven-wrapper.properties` present, pins Maven
-  3.9.15 with a SHA-256 checksum). Both `./mvnw` and the system `mvn` are valid
-  (Java 25 confirmed working).
-- Build: `./mvnw compile` (or `mvn compile`)
-- Test: `./mvnw test` (runs a full `@SpringBootTest`, boots Spring context + H2
-  in-memory DB — expect Hibernate/Hikari log noise, that's normal)
-- **Always `clean` when a Lombok-annotated or generated class changed**:
-  `./mvnw clean test`. Otherwise stale `target/` classes surface as
-  `Unresolved compilation problems: The blank final field ... may not have been
-  initialized` at *runtime*, during Spring startup — looks like a wiring bug, isn't.
-- **Never use `-Dtest=`.** Surefire matches `**/*Spec.class`; a non-matching
-  `-Dtest=` fails the build with `No tests matching pattern` (looks real, isn't),
-  and zsh expands an unquoted `-Dtest=*Spec`. Run `./mvnw test` and grep.
-- **Spock specs go in `src/test/groovy/`**, never `src/test/java/` (which is only
-  for generated `*Ability.java`). A misplaced spec compiles to nothing, silently.
-- Codegen: see the Codegen section above. Nothing to install and no wrapper in
-  this repo — `codegen.config.json` is the project's entire contribution.
-- **Known false-positive LSP noise**: the `jdtls` language server does not
-  understand Lombok annotation processing in this project, so it routinely
-  reports bogus diagnostics on Lombok-annotated classes — e.g. `getId()`/
-  `getAggregateId()`/`setId()` "undefined" on `@Getter`/`@Setter` classes, or
-  "blank final field may not have been initialized" on
-  `@RequiredArgsConstructor` classes. These are stale/incorrect; do not act on
-  them. Treat `mvn compile` / `mvn test-compile` / `mvn test` as the
-  authoritative source of truth for whether code actually compiles/passes.
+- Build: `./mvnw compile`
+- Test: `./mvnw clean test` (SpringBootTest + H2 in-memory)
+- **Always `clean` when Lombok-annotated or generated classes changed**
+- **Never use `-Dtest=`** — surefire matches `**/*Spec.class`
+- Spock specs go in `src/test/groovy/`, not `src/test/java/`
+- **LSP false positives**: jdtls doesn't understand Lombok here. Trust `mvn`, not the IDE.
 
 ## Stack
-- Java 25, Spring Boot 4.1.0 (parent BOM), Maven, Lombok.
-- `spring-boot-starter-data-jpa` + H2 (in-memory, runtime scope) + H2 console
-  starter, `spring-boot-starter-webmvc`.
-- Base package: `pl.pjaworski.examplebackend`.
+Java 25, Spring Boot 4.1.0, Maven, Lombok, H2. Base package: `pl.pjaworski.examplebackend`.
 
 ## Subagents
-`.opencode` (symlinked to `../coding-agents`) defines an `architect` subagent
-that owns domain modeling/API-contract decisions and enforces model/doc
-consistency; it does not write code. Escalate business-intent or modeling
-ambiguity rather than guessing.
+`architect` subagent owns domain modeling/API-contract decisions. Escalate business-intent ambiguity.
