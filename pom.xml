@@ -108,6 +108,12 @@
 							<arguments>
 								<argument>--server.port=${openapi.export.port}</argument>
 							</arguments>
+							<!-- C1-only JIT: short-lived boot for the OpenAPI export;
+								 full-tier JIT buys nothing for a process that is stopped right after. -->
+							<jvmArguments>-XX:TieredStopAtLevel=1</jvmArguments>
+							<!-- slow machines (WSL/drvfs): allow up to 150s before giving up -->
+							<wait>1000</wait>
+							<maxAttempts>150</maxAttempts>
 						</configuration>
 					</execution>
 					<execution>
@@ -177,6 +183,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<!-- C1-only JIT for test JVMs: Spring context boots ~2x faster;
+						 full-tier JIT never pays off within a test run. -->
+					<argLine>-XX:TieredStopAtLevel=1</argLine>
 					<includes>
 						<include>**/Test*.class</include>
 						<include>**/*Test.class</include>
