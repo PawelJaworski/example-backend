@@ -16,5 +16,6 @@ or `attribute key`) — these will be rendered as regular bullet points.
 productCode:Key
 Name: Product
 Subscribes: products-added-to-store
+    * product code
 * product name
 * product description
