@@ -6,9 +6,10 @@ into the same horizontal band. Every event must declare `{aggregateName}:Id`.
 One heading per event.
 
 ## products-added-to-store
-product:Id
+store:Id
 Name: Products Added to Store
 Subprocess: Store
 * product (List)
+* * code
 * * name
 * * description

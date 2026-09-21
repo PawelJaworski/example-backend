@@ -13,7 +13,7 @@ attributes as normal field attributes with different naming (e.g., `attributeId`
 or `attribute key`) — these will be rendered as regular bullet points.
 
 ## stored-product
-product:Key
+productCode:Key
 Name: Product
 Subscribes: products-added-to-store
 * product name
