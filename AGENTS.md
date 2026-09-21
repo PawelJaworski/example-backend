@@ -3,7 +3,7 @@
 ## Paths
 | Key | Path | Used by |
 |-----|------|---------|
-| `docs` | `cd ../docs` | All skills and agents |
+| `docs` | `modelDir` in `codegen.config.json` (this project: `docs/`) | All skills and agents |
 | `eventModel` | `{docs}` | event-modelling, architect, development-team |
 
 ## Codegen
@@ -24,7 +24,7 @@ node .opencode/skills/backend-development/scripts/codegen --test     # print ste
 node .opencode/skills/backend-development/scripts/codegen --next --json
 ```
 
-Source of truth: `../docs/{commands,events,readmodels}.md` + `business-definitions-raw.md`.
+Source of truth: `{docs}/{commands,events,readmodels}.md` + `business-definitions-raw.md`, where `{docs}` is `modelDir` from `codegen.config.json`.
 
 **API contract.** After codegen touches a command or read model, export OpenAPI:
 ```
@@ -39,7 +39,7 @@ Report drift; do not resolve it.
 ## Ad-hoc extensions (no model change)
 Implementation improvements over existing fields — not model changes.
 
-- Do **not** edit `../docs/*.md` or `scripts/codegen/*`
+- Do **not** edit `{docs}/*.md` or `scripts/codegen/*`
 - Still **TDD**: Spock spec first, then minimal code
 - Code goes into the slice's generated projector/repository as **added** members
 - A new *field* or *event* is NOT ad-hoc — escalate to architect
