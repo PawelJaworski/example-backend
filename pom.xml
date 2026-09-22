@@ -28,8 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
-		<groovy.version>4.0.27</groovy.version>
-		<spock.version>2.4-M6-groovy-4.0</spock.version>
+		<spock.version>2.4-groovy-5.0</spock.version>
 		<springdoc.version>3.1.0</springdoc.version>
 		<springdoc-maven-plugin.version>1.5</springdoc-maven-plugin.version>
 		<openapi.export.port>8099</openapi.export.port>
@@ -212,5 +211,67 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>spock-reports</id>
+			<dependencies>
+				<dependency>
+					<groupId>com.athaydes</groupId>
+					<artifactId>spock-reports</artifactId>
+					<version>2.6.1-groovy-5.0</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+			<properties>
+				<generateJsonContracts>true</generateJsonContracts>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${maven-surefire-plugin.version}</version>
+						<configuration>
+							<systemPropertyVariables>
+								<generateJsonContracts>${generateJsonContracts}</generateJsonContracts>
+								<com.athaydes.spockframework.report.showCodeBlocks>true</com.athaydes.spockframework.report.showCodeBlocks>
+								<com.athaydes.spockframework.report.outputDir>public/spock-reports</com.athaydes.spockframework.report.outputDir>
+								<com.athaydes.spockframework.report.template.TemplateReportCreator.reportFileExtension>md</com.athaydes.spockframework.report.template.TemplateReportCreator.reportFileExtension>
+								<com.athaydes.spockframework.report.template.TemplateReportCreator.summaryFileName>summary.md</com.athaydes.spockframework.report.template.TemplateReportCreator.summaryFileName>
+								<com.athaydes.spockframework.report.internal.HtmlReportCreator.inlineCss>false</com.athaydes.spockframework.report.internal.HtmlReportCreator.inlineCss>
+							</systemPropertyVariables>
+							<detail>true</detail>
+							<includes>
+								<include>**/*Specification.*</include>
+							</includes>
+							<excludes>
+								<exclude>**/*IntegrationTest.*</exclude>
+							</excludes>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>test</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>${maven-surefire-plugin.version}</version>
+						<configuration>
+							<excludes>
+								<exclude>**/*Test.*</exclude>
+							</excludes>
+						</configuration>
+						<executions>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

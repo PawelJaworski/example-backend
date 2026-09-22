@@ -2,6 +2,7 @@
   "basePackage": "pl.pjaworski.examplebackend",
   "debugCodeGen": true,
   "gotoModelDir": "cd ../docs",
+  "modelDir": "docs/",
   "mainSourceRoot": "src/main/java",
   "testSourceRoot": "src/test/java"
 }
