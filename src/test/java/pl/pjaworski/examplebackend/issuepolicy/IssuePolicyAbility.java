@@ -1,3 +1,5 @@
+// PRESERVED-BY-HAND: Rule 1 — INSTANCE creation wires IssuePolicyHandler's collaborators
+// via their abilities: PolicyNumberSequenceAbility.INSTANCE.
 package pl.pjaworski.examplebackend.issuepolicy;
 
 import java.util.UUID;
@@ -8,7 +10,7 @@ import pl.pjaworski.examplebackend.testdata.TestDataAbility;
 public interface IssuePolicyAbility extends TestDataAbility, EventStreamAbility {
 
     IssuePolicyHandler INSTANCE =
-            new IssuePolicyHandler(EventStreamAbility.INSTANCE);
+            new IssuePolicyHandler(EventStreamAbility.INSTANCE, PolicyNumberSequenceAbility.INSTANCE);
 
     default IssuePolicyHandler getIssuePolicyHandler() {
         return IssuePolicyAbility.INSTANCE;

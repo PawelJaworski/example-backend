@@ -1,3 +1,7 @@
+// PRESERVED-BY-HAND: policy number is allocated from the policy_number_seq database
+// sequence (GWT scenario "when issue policy then policy number has next ordinal"
+// drives the decision); the model still carries the throwing stub for this bracketed
+// decision.
 package pl.pjaworski.examplebackend.issuepolicy;
 
 import java.util.List;
@@ -19,6 +23,7 @@ import pl.pjaworski.examplebackend.eventstream.EventStream;
 public class IssuePolicyHandler implements CommandHandler<IssuePolicyCmd> {
 
     private final EventStream eventStream;
+    private final PolicyNumberSequence policyNumberSequence;
 
     @PostMapping("issue-policy")
     @Override
@@ -33,7 +38,6 @@ public class IssuePolicyHandler implements CommandHandler<IssuePolicyCmd> {
     }
 
     private String policyNumber() {
-        throw new UnsupportedOperationException(
-                "[policy number] on event 'policy-issued' is a decision with no GWT scenario yet");
+        return policyNumberSequence.nextNumber();
     }
 }
