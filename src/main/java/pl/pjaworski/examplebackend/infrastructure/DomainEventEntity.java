@@ -1,3 +1,6 @@
+// SCAFFOLDED ONCE by the backend codegen — this file is YOURS.
+// scaffold-version: 2
+// Domain-independent event-sourcing runtime; adapt it freely.
 package pl.pjaworski.examplebackend.infrastructure;
 
 import jakarta.persistence.*;
@@ -32,19 +35,12 @@ public class DomainEventEntity {
     public DomainEventEntity(DomainEvent event) {
         this.aggregateId = event.aggregateId();
         this.type = event.eventType();
-        this.eventJson = serialize(event);
+        // The event -> wrapper switch is GENERATED (DomainEventSerde), so adding an
+        // event to events.md wires serialization automatically. Do not inline it here.
+        this.eventJson = DomainEventSerde.serialize(event);
     }
 
     public DomainEvent toDomainEvent() {
         return eventJson.event();
-    }
-
-    private DomainEventSerdeWrapper serialize(DomainEvent event) {
-//        switch (event.eventType()) {
-//            case FOO -> new FooEventSerdeWrapper(event);
-//            case BAR -> new BarEventSerdeWrapper(event);
-//        };
-
-        return null;
     }
 }

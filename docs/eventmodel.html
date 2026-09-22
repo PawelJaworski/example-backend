@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Event Model</title>
+<style>
+:root{
+  --command:#12cdd4;
+  --event:#fac710;
+  --view:#8fd14f;
+  --ink:#0a0a0a;
+  --arrow:#333333;
+  --read-line:#5E35B1;
+}
+*{box-sizing:border-box}
+body{margin:0;padding:40px;background:#fafafa;font-family:'OpenSans','Noto Sans',Arial,sans-serif;color:var(--ink)}
+.wrap{position:relative;width:900px;margin:0 auto;cursor:grab;touch-action:none}
+.wrap.is-panning{cursor:grabbing}
+table{table-layout:fixed;border-collapse:collapse;width:900px}
+td{padding:0;vertical-align:middle;text-align:center;border:none}
+.gutter{font-size:12px;font-weight:600;color:#555;padding:0 10px;text-align:left;vertical-align:middle}
+.time-cell{vertical-align:middle}
+.time-badge{width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid #333;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin:0 auto}
+.sys-gutter{background:#e2e9f5}
+.mid-gutter{background:#f7f8f9}
+.mid-cell{background:#f7f8f9}tr.mid-row td.mid-cell{border-top:2px dashed #bbb;border-bottom:2px dashed #bbb}
+.standalone-gutter{background:#f2f2f2;font-style:italic}
+.standalone-cell{background:#fbfbfb;border-bottom:2px dotted #ccc;text-align:left;vertical-align:middle}
+.standalone-row{display:flex;flex-wrap:wrap;gap:16px;padding:12px 20px}
+.standalone-ui{border-style:dashed}
+.ui-fanin-row{display:inline-flex;gap:8px;align-items:center;justify-content:center}
+.card{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.15);position:relative;user-select:none;transition:opacity .15s}
+.card.dim{opacity:.12}
+.card.active{outline:3px solid #333;outline-offset:2px}
+svg [data-from].dim{opacity:.08}
+.ui-card{width:210px;height:76px;background:#fff;border:2px solid #ccc}
+.ui-label{font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.05em}
+.cmd-card{width:200px;background:var(--command);color:#eafffb}
+.evt-card{width:220px;background:var(--event);color:#8a6408}
+.view-card{width:220px;background:var(--view);color:#35681f}
+.title{font-size:13px;font-weight:700;padding:0 8px;text-align:center;flex-shrink:0}
+.caption{font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:.04em}
+.agg-id{font-size:10px;font-weight:700;text-align:center;flex-shrink:0}
+.fields{width:100%;margin-top:4px;padding:5px 10px 5px;border-top:1px solid rgba(0,0,0,.15)}
+.fields ul{list-style:none;margin:0;padding:0}
+.fields li{font-size:10px;line-height:14px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fields li::before{content:'•';margin-right:5px;opacity:.6}
+.sys-badge{position:absolute;top:-10px;font-size:9px;background:#5E35B1;color:#fff;padding:2px 6px;border-radius:10px}
+.gwt-badge{position:absolute;bottom:-10px;font-size:9px;background:#2196F3;color:#fff;padding:2px 6px;border-radius:10px;cursor:pointer;z-index:10}
+.gwt-badge:hover{background:#1976D2}
+svg{position:absolute;top:0;left:0;pointer-events:none}
+.gwt-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center}
+.gwt-modal.active{display:flex}
+.gwt-modal-content{background:#fff;border-radius:8px;padding:24px;max-width:600px;max-height:80vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.gwt-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:12px}
+.gwt-modal-title{font-size:18px;font-weight:700;color:#333}
+.gwt-modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:#666;padding:0 8px}
+.gwt-modal-close:hover{color:#333}
+.gwt-scenario{margin-bottom:20px;padding:16px;background:#f8f9fa;border-radius:6px;border-left:4px solid #2196F3}
+.gwt-scenario:last-child{margin-bottom:0}
+.gwt-scenario-title{font-size:14px;font-weight:700;color:#333;margin-bottom:12px}
+.gwt-section{margin-bottom:8px}
+.gwt-section:last-child{margin-bottom:0}
+.gwt-section-title{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;margin-bottom:4px}
+.gwt-section-content{font-size:13px;color:#333;line-height:1.4}
+.gwt-section-content ul{margin:0;padding-left:20px}
+.gwt-section-content li{margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<table>
+<colgroup><col style="width:180px"><col style="width:360px"><col style="width:360px"></colgroup>
+<tr style="height:40px"><td class="gutter"></td><td class="time-cell"><div class="time-badge">1</div></td><td class="time-cell"></td></tr>
+
+<tr style="height:130px"><td class="gutter role-gutter" style="background:#ffe0ec">Insurance Agent</td><td class="lane-cell" style="background:#ffe0ec"><div class="card ui-card" data-element="ui-issue-policy--triggers-issue-policy" data-ui-id="issue-policy" data-type="ui" title="ui-issue-policy → issue-policy — click to focus, click again to clear"><div class="ui-label">HTML</div><div class="title">Issue Policy</div></div></td><td class="lane-cell" style="background:#ffe0ec"><div class="card ui-card" data-element="ui-issued-policies--displays" data-ui-id="issued-policies" data-type="ui" title="ui-issued-policies ← read model(s) — click to focus, click again to clear"><div class="ui-label">HTML</div><div class="title">Issued Policies</div></div></td></tr>
+
+<tr class="mid-row" style="height:180px"><td class="gutter mid-gutter"></td><td class="lane-cell mid-cell"><div class="card cmd-card" style="height:94px" data-element="issue-policy" data-type="cmd" title="issue-policy — click to focus, click again to clear"><div class="title">Issue Policy</div><div class="fields"><ul><li>policy holder</li><li>policy coverage</li></ul></div></div></td><td class="lane-cell mid-cell"><div class="card view-card" style="height:140px" data-element="issued-policies" data-type="view" title="issued-policies — click to focus, click again to clear"><div class="title">Issued Policies</div><div class="agg-id">policy:Key</div><div class="fields"><ul><li>policy key</li><li>policy number</li><li>policy holder</li><li>policy coverage</li></ul></div></div></td></tr>
+<tr style="height:166px"><td class="gutter proc-gutter" style="background:#fdf3d3">Policy process</td><td class="lane-cell" style="background:#fdf3d3"><div class="card evt-card" style="height:126px" data-element="policy-issued" data-type="evt" title="policy-issued — click to focus, click again to clear"><div class="title">Policy Issued</div><div class="agg-id">policy:Id</div><div class="fields"><ul><li>policy holder</li><li>policy coverage</li><li>[policy number]</li></ul></div></div></td><td class="lane-cell" style="background:#fdf3d3"></td></tr>
+</table>
+<svg width="900" height="516" viewBox="0 0 900 516">
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#333333"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#5E35B1"/></marker>
+</defs>
+<line x1="360" y1="143" x2="360" y2="213" stroke="#333333" stroke-width="2" marker-end="url(#arrow)" data-from="ui-issue-policy--triggers-issue-policy" data-to="issue-policy" data-kind="triggers"/>
+<line x1="360" y1="307" x2="360" y2="370" stroke="#333333" stroke-width="2" marker-end="url(#arrow)" data-from="issue-policy" data-to="policy-issued" data-kind="produces"/>
+<polyline points="462,370 462,355 610,355 610,260" fill="none" stroke="#5E35B1" stroke-width="2" data-from="policy-issued" data-to="issued-policies" data-kind="observes"/>
+<line x1="720" y1="190" x2="720" y2="143" stroke="#333333" stroke-width="2" marker-end="url(#arrow)" data-from="issued-policies" data-to="ui-issued-policies--displays" data-kind="displays"/>
+</svg>
+</div>
+
+<!-- GWT Modal -->
+<div class="gwt-modal" id="gwt-modal">
+  <div class="gwt-modal-content">
+    <div class="gwt-modal-header">
+      <div class="gwt-modal-title" id="gwt-modal-title">GWT Scenarios</div>
+      <button class="gwt-modal-close" id="gwt-modal-close">&times;</button>
+    </div>
+    <div class="gwt-modal-body" id="gwt-modal-body"></div>
+  </div>
+</div>
+
+<script>
+var GWT_DATA = {};
+/*
+ * Fixed interactivity template for Event Modeling diagrams.
+ * Copy this block byte-identical into the diagram's <script> tag.
+ * Do not adapt or rewrite it per-diagram — only the table/svg markup
+ * around it changes with the inputs.
+ *
+ * Requires:
+ * - every card element has class "card" and attribute data-element="<id>"
+ * - every arrow element (line/polyline) has data-from="<id>" data-to="<id>",
+ *   and optionally data-kind="<kind>" (one of "triggers", "produces",
+ *   "observes", "observes-cmd", "displays") identifying the semantic edge
+ *   type — see kind meanings below.
+ * - the outer container has class "wrap"
+ * - CSS defines .card.dim (dimmed) and .card.active (focused) states,
+ *   a dim rule for arrows, and grab/grabbing cursors for .wrap, e.g.:
+ *     .card.dim{opacity:.12}
+ *     .card.active{outline:3px solid #333;outline-offset:2px}
+ *     svg [data-from].dim{opacity:.08}
+ *     .wrap{cursor:grab}
+ *     .wrap.is-panning{cursor:grabbing}
+ *
+ * Click-to-focus normally highlights the clicked card plus everything that
+ * causally led to it (walking data-from backwards from data-to), i.e. its
+ * upstream ancestors. Trigger UI copies are the deliberate exception: because
+ * they are the first element in a slice and therefore have no ancestors,
+ * clicking one walks forward from its own "triggers" edge through the command,
+ * event, read models, automations, and output UIs in that represented slice.
+ *
+ * UI cards are treated as TERMINAL ancestors: a UI reached as an ancestor
+ * of some other card is included in the upstream set (via the "triggers"
+ * edge from that UI to the command it triggers), but traversal does NOT
+ * continue backward past it through its "displays" edge (read-model -> UI,
+ * i.e. "this UI happens to show that read model"). Which read model a UI
+ * displays is a separate, unrelated causal chain from what command that UI
+ * triggers, so walking backward through "displays" would incorrectly pull
+ * in an unconnected upstream slice. Concretely: clicking a read model
+ * highlights the event that produced it, the command that produced that
+ * event, and the UI card(s) that trigger that command — but not whatever
+ * read model those UI cards happen to display.
+ *
+ * EXCEPTION — the clicked card itself: when the START of the walk is an
+ * output UI, its own "displays" edge IS its causal chain, so it is
+ * followed. Clicking an output UI therefore highlights the read model it
+ * displays, the events feeding that read model, and the commands/UIs
+ * behind them — instead of dimming the entire diagram.
+ */
+var EDGES=[];
+document.querySelectorAll('[data-from]').forEach(function(l){
+  EDGES.push([l.getAttribute('data-from'), l.getAttribute('data-to'), l.getAttribute('data-kind')]);
+});
+var focused=null;
+var wrap=document.querySelector('.wrap');
+var pan=null;
+var suppressBackgroundClick=false;
+function connectedSet(startId){
+  var isTriggerUi=EDGES.some(function(e){return e[0]===startId && e[2]==='triggers';});
+  if(isTriggerUi){
+    var downstream={};downstream[startId]=true;
+    var forwardQueue=[startId];
+    while(forwardQueue.length){
+      var forwardId=forwardQueue.shift();
+      EDGES.forEach(function(e){
+        if(e[0]!==forwardId || downstream[e[1]]) return;
+        downstream[e[1]]=true;
+        forwardQueue.push(e[1]);
+      });
+    }
+    return downstream;
+  }
+  // Upstream-only: walk backwards along data-from -> data-to edges,
+  // i.e. from startId to whatever produced it (ancestors), never forwards
+  // to what it produces (descendants). A UI reached as an ancestor is a
+  // stopping point: we do not continue backward through its "displays"
+  // edge (read-model -> UI) into whatever read model feeds it, since that
+  // belongs to a separate causal chain. The clicked card is the exception:
+  // an output UI's own "displays" edge is its own causal chain and IS
+  // followed.
+  var seen={}; seen[startId]=true;
+  var queue=[startId];
+  while(queue.length){
+    var id=queue.shift();
+    EDGES.forEach(function(e){
+      if(e[1]!==id) return;
+      // Don't walk PAST a UI's "displays" edge when the UI was merely reached
+      // as an ancestor of something else. But when the clicked card IS the
+      // output UI itself, its "displays" edge is exactly its own causal chain,
+      // so it must be followed — otherwise clicking an output UI dims
+      // everything, including its genuine upstream read model/events/commands.
+      if(e[2]==='displays' && id!==startId) return;
+      if(!seen[e[0]]){seen[e[0]]=true;queue.push(e[0]);}
+    });
+  }
+  return seen;
+}
+function refresh(){
+  var set = focused ? connectedSet(focused) : null;
+  document.querySelectorAll('.card').forEach(function(c){
+    var id=c.getAttribute('data-element');
+    c.classList.toggle('active', id===focused);
+    c.classList.toggle('dim', !!set && !set[id]);
+  });
+  document.querySelectorAll('[data-from]').forEach(function(l){
+    var from=l.getAttribute('data-from'), to=l.getAttribute('data-to');
+    var visible = !set || (set[from] && set[to]);
+    l.classList.toggle('dim', !visible);
+  });
+}
+document.querySelectorAll('.card').forEach(function(c){
+  c.addEventListener('click',function(e){
+    e.stopPropagation();
+    var id=c.getAttribute('data-element');
+    focused = (focused===id) ? null : id;
+    refresh();
+  });
+});
+wrap.addEventListener('pointerdown',function(e){
+  if(e.button!==0 || e.target.closest('.card,.gwt-modal-content,button,a,input,textarea,select')) return;
+  pan={pointerId:e.pointerId,x:e.clientX,y:e.clientY,distance:0};
+  wrap.classList.add('is-panning');
+  if(wrap.setPointerCapture) wrap.setPointerCapture(e.pointerId);
+});
+wrap.addEventListener('pointermove',function(e){
+  if(!pan || e.pointerId!==pan.pointerId) return;
+  var dx=e.clientX-pan.x,dy=e.clientY-pan.y;
+  pan.x=e.clientX;pan.y=e.clientY;
+  pan.distance+=Math.abs(dx)+Math.abs(dy);
+  if(pan.distance>3){
+    window.scrollBy(-dx,-dy);
+    e.preventDefault();
+  }
+});
+function finishPan(e){
+  if(!pan || e.pointerId!==pan.pointerId) return;
+  suppressBackgroundClick=pan.distance>3;
+  pan=null;
+  wrap.classList.remove('is-panning');
+  if(wrap.releasePointerCapture && wrap.hasPointerCapture && wrap.hasPointerCapture(e.pointerId)){
+    wrap.releasePointerCapture(e.pointerId);
+  }
+}
+wrap.addEventListener('pointerup',finishPan);
+wrap.addEventListener('pointercancel',function(e){
+  if(!pan || e.pointerId!==pan.pointerId) return;
+  pan=null;
+  suppressBackgroundClick=false;
+  wrap.classList.remove('is-panning');
+});
+wrap.addEventListener('click',function(){
+  if(suppressBackgroundClick){
+    suppressBackgroundClick=false;
+    return;
+  }
+  focused=null; refresh();
+});
+refresh();
+
+// GWT Modal functionality
+function showGwtModal(readmodelId) {
+  var gwtData = window.GWT_DATA && window.GWT_DATA[readmodelId];
+  if (!gwtData) return;
+  
+  var modal = document.getElementById('gwt-modal');
+  var title = document.getElementById('gwt-modal-title');
+  var body = document.getElementById('gwt-modal-body');
+  
+  title.textContent = gwtData.title;
+  
+  var html = '';
+  gwtData.scenarios.forEach(function(scenario) {
+    html += '<div class="gwt-scenario">';
+    html += '<div class="gwt-scenario-title">' + escapeHtmlHtml(scenario.name) + '</div>';
+    
+    if (scenario.given.length) {
+      html += '<div class="gwt-section">';
+      html += '<div class="gwt-section-title">Given</div>';
+      html += '<div class="gwt-section-content"><ul>';
+      scenario.given.forEach(function(item) {
+        html += '<li>' + escapeHtmlHtml(item) + '</li>';
+      });
+      html += '</ul></div></div>';
+    }
+    
+    if (scenario.when.length) {
+      html += '<div class="gwt-section">';
+      html += '<div class="gwt-section-title">When</div>';
+      html += '<div class="gwt-section-content"><ul>';
+      scenario.when.forEach(function(item) {
+        html += '<li>' + escapeHtmlHtml(item) + '</li>';
+      });
+      html += '</ul></div></div>';
+    }
+    
+    if (scenario.then.length) {
+      html += '<div class="gwt-section">';
+      html += '<div class="gwt-section-title">Then</div>';
+      html += '<div class="gwt-section-content"><ul>';
+      scenario.then.forEach(function(item) {
+        html += '<li>' + escapeHtmlHtml(item) + '</li>';
+      });
+      html += '</ul></div></div>';
+    }
+    
+    html += '</div>';
+  });
+  
+  body.innerHTML = html;
+  modal.classList.add('active');
+}
+
+function hideGwtModal() {
+  var modal = document.getElementById('gwt-modal');
+  modal.classList.remove('active');
+}
+
+function escapeHtmlHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Attach GWT badge click handlers
+document.querySelectorAll('.gwt-badge').forEach(function(badge) {
+  badge.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var readmodelId = badge.getAttribute('data-gwt');
+    showGwtModal(readmodelId);
+  });
+});
+
+// Close modal on close button click
+document.getElementById('gwt-modal-close').addEventListener('click', function() {
+  hideGwtModal();
+});
+
+// Close modal on backdrop click
+document.getElementById('gwt-modal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    hideGwtModal();
+  }
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    hideGwtModal();
+  }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Business Definitions</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 2rem;
+    background: #f7f8fa;
+    color: #222;
+  }
+  h1 {
+    margin-bottom: 1rem;
+  }
+  .search-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .search-bar input {
+    flex: 1;
+    min-width: 220px;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  thead th {
+    background: #2c3e50;
+    color: #fff;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    position: sticky;
+    top: 0;
+  }
+  tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) {
+    background: #f3f5f7;
+  }
+  tbody tr:hover {
+    background: #eaf1fb;
+  }
+  td.name-col {
+    font-weight: 600;
+    white-space: nowrap;
+    width: 220px;
+  }
+  ul.def-list {
+    margin: 0.25rem 0 0 0;
+    padding-left: 1.1rem;
+  }
+  ul.def-list li {
+    margin-bottom: 0.35rem;
+  }
+  .no-results {
+    text-align: center;
+    padding: 1.5rem;
+    color: #777;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<h1>Business Definitions</h1>
+
+<div class="search-bar">
+  <input type="text" id="searchName" placeholder="Search by name..." />
+  <input type="text" id="searchDescription" placeholder="Search by description..." />
+</div>
+
+<table id="definitionsTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr data-name="policy holder" data-description="the person or organization that buys the insurance policy and is protected by it. name surname john snow, aleja gwiazd 15/5 wygwizdow">
+      <td class="name-col">Policy Holder</td>
+      <td>
+        The person or organization that buys the insurance policy and is protected by it.<br/>
+        <ul class="def-list">
+          <li>Name</li>
+          <li>Surname</li>
+        </ul>
+        <br/>
+        <b>Examples:</b>
+        <ul class="def-list">
+          <li>John Snow, Aleja Gwiazd 15/5 Wygwizdow</li>
+        </ul>
+      </td>
+    </tr>
+    <tr data-name="policy number" data-description="the unique identifier assigned to an insurance policy. it's unique human readable policy identifier. it contains policy ordinal. pol-1 pol-2">
+      <td class="name-col">Policy Number</td>
+      <td>
+        The unique identifier assigned to an insurance policy. It's unique human readable policy identifier. It contains policy ordinal.<br/>
+        <br/>
+        <b>Examples:</b>
+        <ul class="def-list">
+          <li>POL-1</li>
+          <li>POL-2</li>
+        </ul>
+      </td>
+    </tr>
+    <tr data-name="insurance agent" data-description="the person authorized to sell and issue insurance policies on behalf of the insurance company.">
+      <td class="name-col">Insurance Agent</td>
+      <td>
+        The person authorized to sell and issue insurance policies on behalf of the insurance company.
+      </td>
+    </tr>
+    <tr data-name="policy coverage" data-description="the protection provided by an insurance policy. it defines what risks, losses, events, or damages the insurer will pay for, and under what conditions. coverage period risk list">
+      <td class="name-col">Policy Coverage</td>
+      <td>
+        The protection provided by an insurance policy. It defines what risks, losses, events, or damages the insurer will pay for, and under what conditions.<br/>
+        <ul class="def-list">
+          <li>coverage period</li>
+          <li>risk list</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p id="noResults" class="no-results" style="display:none;">No matching definitions found.</p>
+
+<script>
+  const nameInput = document.getElementById('searchName');
+  const descInput = document.getElementById('searchDescription');
+  const rows = Array.from(document.querySelectorAll('#definitionsTable tbody tr'));
+  const noResults = document.getElementById('noResults');
+
+  function filterRows() {
+    const nameQuery = nameInput.value.trim().toLowerCase();
+    const descQuery = descInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const name = row.getAttribute('data-name') || '';
+      const description = row.getAttribute('data-description') || '';
+      const matchesName = name.includes(nameQuery);
+      const matchesDescription = description.includes(descQuery);
+      const visible = matchesName && matchesDescription;
+      row.style.display = visible ? '' : 'none';
+      if (visible) visibleCount++;
+    });
+
+    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+  }
+
+  nameInput.addEventListener('input', filterRows);
+  descInput.addEventListener('input', filterRows);
+</script>
+</body>
+</html>

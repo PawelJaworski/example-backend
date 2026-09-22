@@ -7,12 +7,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pl.pjaworski.examplebackend.domain.events.DomainEventType;
 import pl.pjaworski.examplebackend.eventstream.DomainEvent;
 
-/**
- * @JsonSubTypes({
- *         @JsonSubTypes.Type(value = FooEventSerdeWrapper.class, name = "FOO"),
- *         @JsonSubTypes.Type(value = BarEventSerdeWrapper.class, name = "BAR"),
- * })
- */
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = PolicyIssuedEventSerdeWrapper.class, name = "POLICY_ISSUED"),
+})
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
