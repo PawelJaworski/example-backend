@@ -1,16 +1,24 @@
 // SCAFFOLDED ONCE by the backend codegen — this file is YOURS.
-// scaffold-version: 2
+// scaffold-version: 3
 // Domain-independent event-sourcing runtime; adapt it freely.
 package pl.pjaworski.examplebackend.infrastructure;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import pl.pjaworski.examplebackend.domain.events.DomainEventType;
 import pl.pjaworski.examplebackend.eventstream.DomainEvent;
-
-import java.util.UUID;
 
 @Entity
 @Table(name = "domain_event")
@@ -23,7 +31,7 @@ public class DomainEventEntity {
     @Setter
     private Long id;
 
-    private UUID aggregateId;
+    private Long aggregateId;
 
     @Enumerated(EnumType.STRING)
     private DomainEventType type;

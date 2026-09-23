@@ -7,7 +7,6 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,9 +26,9 @@ import pl.pjaworski.examplebackend.domain.PolicyHolder;
 public class IssuedPoliciesEntity {
 
     @Id
-    private UUID aggregateId;
+    private Long aggregateId;
 
-    private UUID policyKey;
+    private Long policyKey;
     private String policyNumber;
     @Embedded
     @AttributeOverrides({

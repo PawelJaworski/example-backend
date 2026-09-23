@@ -4,11 +4,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 public class IssuedPoliciesInMemoryRepository implements IssuedPoliciesRepository {
 
-    private final Map<UUID, IssuedPoliciesEntity> entities = new LinkedHashMap<>();
+    private final Map<Long, IssuedPoliciesEntity> entities = new LinkedHashMap<>();
 
     @Override
     public IssuedPoliciesEntity save(IssuedPoliciesEntity entity) {
@@ -17,7 +16,7 @@ public class IssuedPoliciesInMemoryRepository implements IssuedPoliciesRepositor
     }
 
     @Override
-    public Optional<IssuedPoliciesEntity> findById(UUID id) {
+    public Optional<IssuedPoliciesEntity> findById(Long id) {
         return Optional.ofNullable(entities.get(id));
     }
 

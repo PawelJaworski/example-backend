@@ -8,6 +8,7 @@ class IssuedPoliciesSpec extends Specification implements IssuePolicyAbility, Is
 
     def setup() {
         reset_event_stream()
+        reset_aggregate_id_sequence()
         reset_policy_number_sequence()
     }
 

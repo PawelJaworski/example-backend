@@ -2,7 +2,6 @@ package pl.pjaworski.examplebackend.issuedpolicies;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;

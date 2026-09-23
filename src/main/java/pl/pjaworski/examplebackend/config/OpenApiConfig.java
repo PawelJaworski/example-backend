@@ -9,11 +9,10 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI exampleBackendOpenApi() {
+    public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Example Backend Service API")
-                        .description("API documentation for the Example Backend Service")
-                        .version("0.0.1-SNAPSHOT"));
+                        .title("Example Backend API")
+                        .version("1.0"));
     }
 }
