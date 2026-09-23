@@ -11,19 +11,24 @@
   --ink:#0a0a0a;
   --arrow:#333333;
   --read-line:#5E35B1;
+  --ext-event:#cfd8dc;
+  --translator:#26a69a;
 }
 *{box-sizing:border-box}
 body{margin:0;padding:40px;background:#fafafa;font-family:'OpenSans','Noto Sans',Arial,sans-serif;color:var(--ink)}
-.wrap{position:relative;width:900px;margin:0 auto;cursor:grab;touch-action:none}
+.wrap{position:relative;width:1260px;margin:0 auto;cursor:grab;touch-action:none}
 .wrap.is-panning{cursor:grabbing}
-table{table-layout:fixed;border-collapse:collapse;width:900px}
+table{table-layout:fixed;border-collapse:collapse;width:1260px}
 td{padding:0;vertical-align:middle;text-align:center;border:none}
 .gutter{font-size:12px;font-weight:600;color:#555;padding:0 10px;text-align:left;vertical-align:middle}
 .time-cell{vertical-align:middle}
 .time-badge{width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid #333;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin:0 auto}
 .sys-gutter{background:#e2e9f5}
+.bots-gutter{background:#b2dfdb;color:#004d40}
+.bots-cell{background:#e0f2f1}
 .mid-gutter{background:#f7f8f9}
 .mid-cell{background:#f7f8f9}tr.mid-row td.mid-cell{border-top:2px dashed #bbb;border-bottom:2px dashed #bbb}
+.ext-gutter{background:#eceff1;color:#37474f;font-style:italic}
 .standalone-gutter{background:#f2f2f2;font-style:italic}
 .standalone-cell{background:#fbfbfb;border-bottom:2px dotted #ccc;text-align:left;vertical-align:middle}
 .standalone-row{display:flex;flex-wrap:wrap;gap:16px;padding:12px 20px}
@@ -38,6 +43,8 @@ svg [data-from].dim{opacity:.08}
 .cmd-card{width:200px;background:var(--command);color:#eafffb}
 .evt-card{width:220px;background:var(--event);color:#8a6408}
 .view-card{width:220px;background:var(--view);color:#35681f}
+.ext-card{width:220px;background:var(--ext-event);color:#37474f;border:2px dashed #90a4ae}
+.tr-card{width:200px;background:var(--translator);color:#eafffb}
 .title{font-size:13px;font-weight:700;padding:0 8px;text-align:center;flex-shrink:0}
 .caption{font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:.04em}
 .agg-id{font-size:10px;font-weight:700;text-align:center;flex-shrink:0}
@@ -46,6 +53,7 @@ svg [data-from].dim{opacity:.08}
 .fields li{font-size:10px;line-height:14px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fields li::before{content:'•';margin-right:5px;opacity:.6}
 .sys-badge{position:absolute;top:-10px;font-size:9px;background:#5E35B1;color:#fff;padding:2px 6px;border-radius:10px}
+.tr-badge{position:absolute;top:-10px;font-size:9px;background:#004d40;color:#fff;padding:2px 6px;border-radius:10px}
 .gwt-badge{position:absolute;bottom:-10px;font-size:9px;background:#2196F3;color:#fff;padding:2px 6px;border-radius:10px;cursor:pointer;z-index:10}
 .gwt-badge:hover{background:#1976D2}
 svg{position:absolute;top:0;left:0;pointer-events:none}
@@ -70,23 +78,28 @@ svg{position:absolute;top:0;left:0;pointer-events:none}
 <body>
 <div class="wrap">
 <table>
-<colgroup><col style="width:180px"><col style="width:360px"><col style="width:360px"></colgroup>
-<tr style="height:40px"><td class="gutter"></td><td class="time-cell"><div class="time-badge">1</div></td><td class="time-cell"></td></tr>
+<colgroup><col style="width:180px"><col style="width:360px"><col style="width:360px"><col style="width:360px"></colgroup>
+<tr style="height:40px"><td class="gutter"></td><td class="time-cell"></td><td class="time-cell"><div class="time-badge">1</div></td><td class="time-cell"></td></tr>
+<tr style="height:130px"><td class="gutter bots-gutter">Bots</td><td class="lane-cell bots-cell"></td><td class="lane-cell bots-cell"><div class="card tr-card" style="height:56px" data-element="tr-translate-application--cmd-issue-policy" data-ui-id="translate-application" data-type="tr" title="translate-application → issue-policy — click to focus, click again to clear"><div class="tr-badge">⚙</div><div class="title">Translate Application</div></div></td><td class="lane-cell bots-cell"></td></tr>
 
-<tr style="height:130px"><td class="gutter role-gutter" style="background:#ffe0ec">Insurance Agent</td><td class="lane-cell" style="background:#ffe0ec"><div class="card ui-card" data-element="ui-issue-policy--triggers-issue-policy" data-ui-id="issue-policy" data-type="ui" title="ui-issue-policy → issue-policy — click to focus, click again to clear"><div class="ui-label">HTML</div><div class="title">Issue Policy</div></div></td><td class="lane-cell" style="background:#ffe0ec"><div class="card ui-card" data-element="ui-issued-policies--displays" data-ui-id="issued-policies" data-type="ui" title="ui-issued-policies ← read model(s) — click to focus, click again to clear"><div class="ui-label">HTML</div><div class="title">Issued Policies</div></div></td></tr>
+<tr style="height:130px"><td class="gutter role-gutter" style="background:#ffe0ec">Insurance Agent</td><td class="lane-cell" style="background:#ffe0ec"></td><td class="lane-cell" style="background:#ffe0ec"><div class="card ui-card" data-element="ui-issue-policy--triggers-issue-policy" data-ui-id="issue-policy" data-type="ui" title="ui-issue-policy → issue-policy — click to focus, click again to clear"><div class="ui-label">HTML</div><div class="title">Issue Policy</div></div></td><td class="lane-cell" style="background:#ffe0ec"><div class="card ui-card" data-element="ui-issued-policies--displays" data-ui-id="issued-policies" data-type="ui" title="ui-issued-policies ← read model(s) — click to focus, click again to clear"><div class="ui-label">HTML</div><div class="title">Issued Policies</div></div></td></tr>
 
-<tr class="mid-row" style="height:180px"><td class="gutter mid-gutter"></td><td class="lane-cell mid-cell"><div class="card cmd-card" style="height:94px" data-element="issue-policy" data-type="cmd" title="issue-policy — click to focus, click again to clear"><div class="title">Issue Policy</div><div class="fields"><ul><li>policy holder</li><li>policy coverage</li></ul></div></div></td><td class="lane-cell mid-cell"><div class="card view-card" style="height:140px" data-element="issued-policies" data-type="view" title="issued-policies — click to focus, click again to clear"><div class="title">Issued Policies</div><div class="agg-id">policy:Key</div><div class="fields"><ul><li>policy key</li><li>policy number</li><li>policy holder</li><li>policy coverage</li></ul></div><div class="gwt-badge" data-gwt="issued-policies" title="Click to view GWT scenarios">GWT</div></div></td></tr>
-<tr style="height:166px"><td class="gutter proc-gutter" style="background:#fdf3d3">Policy process</td><td class="lane-cell" style="background:#fdf3d3"><div class="card evt-card" style="height:126px" data-element="policy-issued" data-type="evt" title="policy-issued — click to focus, click again to clear"><div class="title">Policy Issued</div><div class="agg-id">policy:Id</div><div class="fields"><ul><li>policy holder</li><li>policy coverage</li><li>[policy number]</li></ul></div></div></td><td class="lane-cell" style="background:#fdf3d3"></td></tr>
+<tr class="mid-row" style="height:180px"><td class="gutter mid-gutter"></td><td class="lane-cell mid-cell"></td><td class="lane-cell mid-cell"><div class="card cmd-card" style="height:94px" data-element="issue-policy" data-type="cmd" title="issue-policy — click to focus, click again to clear"><div class="title">Issue Policy</div><div class="fields"><ul><li>policy holder</li><li>policy coverage</li></ul></div></div></td><td class="lane-cell mid-cell"><div class="card view-card" style="height:140px" data-element="issued-policies" data-type="view" title="issued-policies — click to focus, click again to clear"><div class="title">Issued Policies</div><div class="agg-id">policy:Key</div><div class="fields"><ul><li>policy key</li><li>policy number</li><li>policy holder</li><li>policy coverage</li></ul></div><div class="gwt-badge" data-gwt="issued-policies" title="Click to view GWT scenarios">GWT</div></div></td></tr>
+<tr style="height:166px"><td class="gutter proc-gutter" style="background:#fdf3d3">Policy process</td><td class="lane-cell" style="background:#fdf3d3"></td><td class="lane-cell" style="background:#fdf3d3"><div class="card evt-card" style="height:126px" data-element="policy-issued" data-type="evt" title="policy-issued — click to focus, click again to clear"><div class="title">Policy Issued</div><div class="agg-id">policy:Id</div><div class="fields"><ul><li>policy holder</li><li>policy coverage</li><li>[policy number]</li></ul></div></div></td><td class="lane-cell" style="background:#fdf3d3"></td></tr>
+<tr style="height:150px"><td class="gutter ext-gutter" style="background:#efe7f8">Underwriter Portal</td><td class="lane-cell" style="background:#efe7f8"><div class="card ext-card" style="height:60px" data-element="ext-application-received" data-type="ext" title="application-received — external event from Underwriter Portal — click to focus, click again to clear"><div class="title">Application Received</div></div></td><td class="lane-cell" style="background:#efe7f8"></td><td class="lane-cell" style="background:#efe7f8"></td></tr>
 </table>
-<svg width="900" height="516" viewBox="0 0 900 516">
+<svg width="1260" height="796" viewBox="0 0 1260 796">
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#333333"/></marker>
 <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#5E35B1"/></marker>
+<marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#00796B"/></marker>
 </defs>
-<line x1="360" y1="143" x2="360" y2="213" stroke="#333333" stroke-width="2" marker-end="url(#arrow)" data-from="ui-issue-policy--triggers-issue-policy" data-to="issue-policy" data-kind="triggers"/>
-<line x1="360" y1="307" x2="360" y2="370" stroke="#333333" stroke-width="2" marker-end="url(#arrow)" data-from="issue-policy" data-to="policy-issued" data-kind="produces"/>
-<polyline points="462,370 462,355 610,355 610,260" fill="none" stroke="#5E35B1" stroke-width="2" data-from="policy-issued" data-to="issued-policies" data-kind="observes"/>
-<line x1="720" y1="190" x2="720" y2="143" stroke="#333333" stroke-width="2" marker-end="url(#arrow)" data-from="issued-policies" data-to="ui-issued-policies--displays" data-kind="displays"/>
+<line x1="720" y1="273" x2="720" y2="343" stroke="#333333" stroke-width="2" marker-end="url(#arrow)" data-from="ui-issue-policy--triggers-issue-policy" data-to="issue-policy" data-kind="triggers"/>
+<line x1="720" y1="437" x2="720" y2="500" stroke="#333333" stroke-width="2" marker-end="url(#arrow)" data-from="issue-policy" data-to="policy-issued" data-kind="produces"/>
+<polyline points="822,500 822,485 970,485 970,390" fill="none" stroke="#5E35B1" stroke-width="2" data-from="policy-issued" data-to="issued-policies" data-kind="observes"/>
+<line x1="1080" y1="320" x2="1080" y2="273" stroke="#333333" stroke-width="2" marker-end="url(#arrow)" data-from="issued-policies" data-to="ui-issued-policies--displays" data-kind="displays"/>
+<polyline points="812,133 880,133 880,285 720,285 720,343" fill="none" stroke="#00796B" stroke-width="2" marker-end="url(#arrow-teal)" data-from="tr-translate-application--cmd-issue-policy" data-to="issue-policy" data-kind="translates-cmd"/>
+<polyline points="462,691 462,180 720,180 720,133" fill="none" stroke="#00796B" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow-teal)" data-from="ext-application-received" data-to="tr-translate-application--cmd-issue-policy" data-kind="translates"/>
 </svg>
 </div>
 
@@ -113,8 +126,8 @@ var GWT_DATA = {"issued-policies":{"title":"Given When Then","scenarios":[{"name
  * - every card element has class "card" and attribute data-element="<id>"
  * - every arrow element (line/polyline) has data-from="<id>" data-to="<id>",
  *   and optionally data-kind="<kind>" (one of "triggers", "produces",
- *   "observes", "observes-cmd", "displays") identifying the semantic edge
- *   type — see kind meanings below.
+ *   "observes", "observes-cmd", "displays", "translates", "translates-cmd")
+ *   identifying the semantic edge type — see kind meanings below.
  * - the outer container has class "wrap"
  * - CSS defines .card.dim (dimmed) and .card.active (focused) states,
  *   a dim rule for arrows, and grab/grabbing cursors for .wrap, e.g.:
@@ -124,12 +137,24 @@ var GWT_DATA = {"issued-policies":{"title":"Given When Then","scenarios":[{"name
  *     .wrap{cursor:grab}
  *     .wrap.is-panning{cursor:grabbing}
  *
+ * Edge kinds:
+ *   triggers        UI card -> command (human trigger)
+ *   produces        command -> event(s)
+ *   observes        event -> read model (purple, no arrowhead)
+ *   observes-cmd    event -> automated command (automation/robot step)
+ *   displays        read model -> output UI
+ *   translates      external event -> translator (Translation Pattern)
+ *   translates-cmd  translator -> command (Translation Pattern)
+ *
  * Click-to-focus normally highlights the clicked card plus everything that
  * causally led to it (walking data-from backwards from data-to), i.e. its
  * upstream ancestors. Trigger UI copies are the deliberate exception: because
  * they are the first element in a slice and therefore have no ancestors,
  * clicking one walks forward from its own "triggers" edge through the command,
  * event, read models, automations, and output UIs in that represented slice.
+ * The same forward rule applies to External Events ("translates") and to
+ * Translators ("translates-cmd"): they are start-of-slice nodes, so clicking
+ * one lights up the whole translated slice instead of dimming everything.
  *
  * UI cards are treated as TERMINAL ancestors: a UI reached as an ancestor
  * of some other card is included in the upstream set (via the "triggers"
@@ -158,7 +183,9 @@ var wrap=document.querySelector('.wrap');
 var pan=null;
 var suppressBackgroundClick=false;
 function connectedSet(startId){
-  var isTriggerUi=EDGES.some(function(e){return e[0]===startId && e[2]==='triggers';});
+  var isTriggerUi=EDGES.some(function(e){
+    return e[0]===startId && (e[2]==='triggers' || e[2]==='translates' || e[2]==='translates-cmd');
+  });
   if(isTriggerUi){
     var downstream={};downstream[startId]=true;
     var forwardQueue=[startId];
