@@ -51,6 +51,14 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
+		<!-- docs/translators.md declares translate-application with "Type: kafka",
+		     so codegen emits a @KafkaListener. The annotation needs to be on the
+		     compile classpath; the version is managed by spring-boot-starter-parent.
+		     No @EnableKafka is present, so no listener containers are started. -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.h2database</groupId>

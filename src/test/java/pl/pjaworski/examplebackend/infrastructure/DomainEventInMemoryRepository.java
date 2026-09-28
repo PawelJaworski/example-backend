@@ -1,8 +1,14 @@
 package pl.pjaworski.examplebackend.infrastructure;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 public class DomainEventInMemoryRepository implements DomainEventRepository {
+
     private final Set<DomainEventEntity> entities = new HashSet<>();
 
     @Override
@@ -22,8 +28,10 @@ public class DomainEventInMemoryRepository implements DomainEventRepository {
     }
 
     @Override
-    public List<DomainEventEntity> findAllByAggregateId(UUID aggregateId) {
-        return entities.stream().filter(e -> Objects.equals(e.getAggregateId(), aggregateId)).toList();
+    public List<DomainEventEntity> findAllByAggregateId(Long aggregateId) {
+        return entities.stream()
+                .filter(e -> Objects.equals(e.getAggregateId(), aggregateId))
+                .toList();
     }
 
     @Override

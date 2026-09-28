@@ -1,0 +1,20 @@
+{
+  "scaffoldVersions": {
+    "src/main/java/pl/pjaworski/examplebackend/domain/PolicyAggregate.java": 1,
+    "src/main/java/pl/pjaworski/examplebackend/eventstream/CommandHandler.java": 2,
+    "src/main/java/pl/pjaworski/examplebackend/eventstream/DomainEvent.java": 2,
+    "src/main/java/pl/pjaworski/examplebackend/eventstream/EventHandler.java": 1,
+    "src/main/java/pl/pjaworski/examplebackend/eventstream/EventStream.java": 2,
+    "src/main/java/pl/pjaworski/examplebackend/eventstream/PersistingProjector.java": 1,
+    "src/main/java/pl/pjaworski/examplebackend/infrastructure/AggregateIdSequence.java": 1,
+    "src/main/java/pl/pjaworski/examplebackend/infrastructure/DomainEventEntity.java": 3,
+    "src/main/java/pl/pjaworski/examplebackend/infrastructure/DomainEventJpaRepository.java": 1,
+    "src/main/java/pl/pjaworski/examplebackend/infrastructure/DomainEventRepository.java": 2,
+    "src/main/java/pl/pjaworski/examplebackend/infrastructure/EventStreamImpl.java": 3,
+    "src/test/java/pl/pjaworski/examplebackend/infrastructure/DomainEventInMemoryRepository.java": 2,
+    "src/test/java/pl/pjaworski/examplebackend/testdata/TestDataAbility.java": 1
+  },
+  "preserved": [
+    "src/main/java/pl/pjaworski/examplebackend/issuepolicy/IssuePolicyHandler.java"
+  ]
+}
