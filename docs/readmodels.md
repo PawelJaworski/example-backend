@@ -3,14 +3,14 @@
 ## policy-details
 Name: Policy Details
 Subscribes: policy-issued
-policy:Id
-* policy id
+policy:Key
+* policy key
 * policy holder
 * policy coverage
 * policy number
 
 ## issued-policies
-policy:Key
+policy:RowKey
 Name: Issued Policies
 Subscribes: policy-issued
 * policy key
