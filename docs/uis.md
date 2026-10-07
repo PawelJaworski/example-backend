@@ -2,6 +2,7 @@
 
 ## issue-policy
 Type: html
+Url: http://localhost:4200/issue-policy
 Name: Issue Policy
 Actor: Insurance Agent
 
