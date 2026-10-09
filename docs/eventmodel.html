@@ -52,6 +52,7 @@ td{padding:0;vertical-align:middle;text-align:center;border:none}
 .fields ul{list-style:none;margin:0;padding:0}
 .fields li{font-size:10px;line-height:14px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fields li::before{content:'•';margin-right:5px;opacity:.6}
+.fields-separator{height:1px;margin:4px 0;background:#bbb;border:none}
 .sys-badge{position:absolute;top:-10px;font-size:9px;background:#5E35B1;color:#fff;padding:2px 6px;border-radius:10px}
 .tr-badge{position:absolute;top:-10px;font-size:9px;background:#004d40;color:#fff;padding:2px 6px;border-radius:10px}
 .gwt-badge{position:absolute;bottom:-10px;font-size:9px;background:#2196F3;color:#fff;padding:2px 6px;border-radius:10px;cursor:pointer;z-index:10}
@@ -127,7 +128,7 @@ svg{position:absolute;top:0;left:0;pointer-events:none}
 
 <script>
 var GWT_DATA = {"issued-policies":{"title":"Given When Then","scenarios":[{"name":"when issue policy then policy number has next ordinal","given":["issue policy (POL-1)"],"when":["issue policy (POL-2)"],"then":["policy number has next ordinal (POL-2)"]}]}};
-var EM_MODEL = {"commands":[{"id":"issue-policy","name":"Issue Policy","produces":["policy-issued"],"fieldTrees":[{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]}],"fields":["policy holder","policy coverage"],"actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent","_h":94}],"events":[{"id":"policy-issued","aggregateId":"policy","name":"Policy Issued","subprocess":"Policy","fieldTrees":[{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]},{"name":"[policy number]","list":false,"children":[]}],"fields":["policy holder","policy coverage","[policy number]"],"_h":126}],"readmodels":[{"id":"policy-details","name":"Policy Details","subscribes":["policy-issued"],"keys":[{"name":"policy","mode":"Key"}],"fieldTrees":[{"name":"policy key","list":false,"children":[]},{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]},{"name":"policy number","list":false,"children":[]}],"fields":["policy key","policy holder","policy coverage","policy number"],"_h":140,"gwt":null},{"id":"issued-policies","keys":[{"name":"policy","mode":"RowKey"}],"name":"Issued Policies","subscribes":["policy-issued"],"fieldTrees":[{"name":"policy key","list":false,"children":[]},{"name":"policy number","list":false,"children":[]},{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]}],"fields":["policy key","policy number","policy holder","policy coverage"],"_h":140,"gwt":{"title":"Given When Then","scenarios":[{"name":"when issue policy then policy number has next ordinal","given":["issue policy (POL-1)"],"when":["issue policy (POL-2)"],"then":["policy number has next ordinal (POL-2)"]}]}}],"uis":[{"id":"issue-policy","typeHint":"html","url":"http://localhost:4200/issue-policy","name":"Issue Policy","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"},{"id":"issued-policies","typeHint":"html","name":"Issued Policies","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"}],"uiById":{"issue-policy":{"id":"issue-policy","typeHint":"html","url":"http://localhost:4200/issue-policy","name":"Issue Policy","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"},"issued-policies":{"id":"issued-policies","typeHint":"html","name":"Issued Policies","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"}},"triggerUiForCommand":{"issue-policy":[{"id":"issue-policy","typeHint":"html","url":"http://localhost:4200/issue-policy","name":"Issue Policy","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"}]},"uiSources":{"issued-policies":["issued-policies"]},"uiPlacementCol":{"issued-policies":3},"eventProducer":{"policy-issued":{"id":"issue-policy","name":"Issue Policy","produces":["policy-issued"],"fieldTrees":[{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]}],"fields":["policy holder","policy coverage"],"actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent","_h":94}},"commandPrimaryEvent":{"issue-policy":"policy-issued"},"columns":[{"type":"ext","extId":"application-received"},{"type":"event","eventId":"policy-issued"},{"type":"view","viewId":"policy-details"},{"type":"view","viewId":"issued-policies"}],"midRow":[null,{"type":"cmd","id":"issue-policy"},{"type":"view","id":"policy-details"},{"type":"view","id":"issued-policies"}],"roles":[{"key":"Insurance Agent","actors":["Insurance Agent"]}],"hasSystem":false,"subprocesses":["Policy"],"standaloneUis":[],"externalEvents":[{"id":"application-received","name":"Application Received","systemName":"Underwriter Portal","fieldTrees":[{"name":"underwritter message","list":false,"children":[]}],"fields":["underwritter message"],"_h":84}],"translators":[{"id":"translate-application","name":"Translate Application","typeHint":"kafka","subscribes":["application-received"],"produces":["issue-policy"],"_h":68}],"hasBots":true,"externalSystems":["Underwriter Portal"],"extColFor":{"application-received":0},"translatorBoxes":[{"tr":{"id":"translate-application","name":"Translate Application","typeHint":"kafka","subscribes":["application-received"],"produces":["issue-policy"],"_h":68},"cmdId":"issue-policy","colIdx":1,"elementId":"tr-translate-application--cmd-issue-policy"}]};
+var EM_MODEL = {"commands":[{"id":"issue-policy","name":"Issue Policy","produces":["policy-issued"],"fieldTrees":[{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]}],"fields":["policy holder","policy coverage"],"actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent","_h":94}],"events":[{"id":"policy-issued","aggregateId":"policy","name":"Policy Issued","subprocess":"Policy","fieldTrees":[{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]},{"name":"[policy number]","list":false,"children":[]}],"fields":["policy holder","policy coverage","[policy number]"],"_h":126}],"readmodels":[{"id":"policy-details","name":"Policy Details","subscribes":["policy-issued"],"keys":[{"name":"policy","mode":"Key"}],"fieldTrees":[{"name":"policy key","list":false,"children":[]},{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]},{"name":"policy number","list":false,"children":[]}],"fields":["policy key","policy holder","policy coverage","policy number"],"requestFields":[],"responseFields":["policy key","policy holder","policy coverage","policy number"],"requestFieldTrees":[],"responseFieldTrees":[{"name":"policy key","list":false,"children":[]},{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]},{"name":"policy number","list":false,"children":[]}],"_h":140,"gwt":null},{"id":"issued-policies","keys":[{"name":"policy","mode":"RowKey"}],"name":"Issued Policies","subscribes":["policy-issued"],"fieldTrees":[{"name":"policy key","list":false,"children":[]},{"name":"policy number","list":false,"children":[]},{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]}],"fields":["policy key","policy number","policy holder","policy coverage"],"requestFields":[],"responseFields":["policy key","policy number","policy holder","policy coverage"],"requestFieldTrees":[],"responseFieldTrees":[{"name":"policy key","list":false,"children":[]},{"name":"policy number","list":false,"children":[]},{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]}],"_h":140,"gwt":{"title":"Given When Then","scenarios":[{"name":"when issue policy then policy number has next ordinal","given":["issue policy (POL-1)"],"when":["issue policy (POL-2)"],"then":["policy number has next ordinal (POL-2)"]}]}}],"uis":[{"id":"issue-policy","typeHint":"html","url":"http://localhost:4200/issue-policy","name":"Issue Policy","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"},{"id":"issued-policies","typeHint":"html","name":"Issued Policies","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"}],"uiById":{"issue-policy":{"id":"issue-policy","typeHint":"html","url":"http://localhost:4200/issue-policy","name":"Issue Policy","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"},"issued-policies":{"id":"issued-policies","typeHint":"html","name":"Issued Policies","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"}},"triggerUiForCommand":{"issue-policy":[{"id":"issue-policy","typeHint":"html","url":"http://localhost:4200/issue-policy","name":"Issue Policy","actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent"}]},"uiSources":{"issued-policies":["issued-policies"]},"uiPlacementCol":{"issued-policies":3},"eventProducer":{"policy-issued":{"id":"issue-policy","name":"Issue Policy","produces":["policy-issued"],"fieldTrees":[{"name":"policy holder","list":false,"children":[]},{"name":"policy coverage","list":false,"children":[]}],"fields":["policy holder","policy coverage"],"actor":"Insurance Agent","actors":["Insurance Agent"],"actorKey":"Insurance Agent","_h":94}},"commandPrimaryEvent":{"issue-policy":"policy-issued"},"columns":[{"type":"ext","extId":"application-received"},{"type":"event","eventId":"policy-issued"},{"type":"view","viewId":"policy-details"},{"type":"view","viewId":"issued-policies"}],"midRow":[null,{"type":"cmd","id":"issue-policy"},{"type":"view","id":"policy-details"},{"type":"view","id":"issued-policies"}],"roles":[{"key":"Insurance Agent","actors":["Insurance Agent"]}],"hasSystem":false,"subprocesses":["Policy"],"standaloneUis":[],"externalEvents":[{"id":"application-received","name":"Application Received","systemName":"Underwriter Portal","fieldTrees":[{"name":"underwritter message","list":false,"children":[]}],"fields":["underwritter message"],"_h":84}],"translators":[{"id":"translate-application","name":"Translate Application","typeHint":"kafka","subscribes":["application-received"],"produces":["issue-policy"],"_h":68}],"hasBots":true,"externalSystems":["Underwriter Portal"],"extColFor":{"application-received":0},"translatorBoxes":[{"tr":{"id":"translate-application","name":"Translate Application","typeHint":"kafka","subscribes":["application-received"],"produces":["issue-policy"],"_h":68},"cmdId":"issue-policy","colIdx":1,"elementId":"tr-translate-application--cmd-issue-policy"}]};
 'use strict';
 /*
  * Shared layout/render core for Event Modeling diagrams.
@@ -202,11 +203,37 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
+// Nested "* *" fields carry ONE leading space per nesting level (see the
+// bullet parser in generate.js). HTML collapses plain whitespace and
+// stripDoubleQuestion() trims the name, so re-emit that indent as
+// non-breaking spaces: the diagram shows each inner (list) attribute
+// visibly indented — one space per nesting level (a list inside a list
+// adds one more space per level).
+function fieldIndentHtml(f) {
+  return '&nbsp;'.repeat(String(f).match(/^ */)[0].length);
+}
+
 function fieldsHtml(fields) {
   if (!fields || !fields.length) return '';
   const capped = fields.length > MAX_FIELDS;
   const style = capped ? ` style="max-height:${MAX_FIELDS * FIELD_LINE_H}px;overflow-y:auto"` : '';
-  return `<div class="fields"${style}><ul>${fields.map((f) => `<li>${escapeHtml(stripDoubleQuestion(f))}</li>`).join('')}</ul></div>`;
+  return `<div class="fields"${style}><ul>${fields.map((f) => `<li>${fieldIndentHtml(f)}${escapeHtml(stripDoubleQuestion(f))}</li>`).join('')}</ul></div>`;
+}
+
+// Like fieldsHtml but splits the field list into two groups separated by a
+// visible horizontal rule (used for read-model request/response divider).
+function fieldsHtmlWithSeparator(requestFields, responseFields) {
+  let html = '';
+  if (requestFields && requestFields.length) {
+    html += fieldsHtml(requestFields);
+  }
+  if (responseFields && responseFields.length) {
+    if (requestFields && requestFields.length) {
+      html += '<div class="fields-separator"></div>';
+    }
+    html += fieldsHtml(responseFields);
+  }
+  return html;
 }
 
 // Read-model-only: stacked bold lines directly under the title — the
@@ -478,7 +505,7 @@ const EMLayout = {
   // helpers
   fieldsBlockHeight, cardHeight, rowHeightFor,
   isDoubleQuestionField, stripDoubleQuestion, escapeHtml,
-  fieldsHtml, idKeyLinesHtml, actorsHtml,
+  fieldsHtml, fieldsHtmlWithSeparator, idKeyLinesHtml, actorsHtml,
   triggerUiElementId, outputUiElementId, translatorElementId,
   colIndexForEvent, colIndexForView, colIndexForExt,
   // layout
@@ -652,7 +679,10 @@ function renderTable(model, geo) {
     } else if (occ && occ.type === 'view' && vis(occ.id)) {
       const rm = readmodels.find((rr) => rr.id === occ.id);
       const gwtBadge = rm.gwt ? `<div class="gwt-badge" data-gwt="${rm.id}" title="Click to view GWT scenarios">GWT</div>` : '';
-      content = `<div class="card view-card" style="height:${rm._h}px" data-element="${rm.id}" data-type="view" title="${rm.id} — click to focus, click again to clear"><div class="title">${escapeHtml(rm.name)}</div>${idKeyLinesHtml(rm)}${fieldsHtml(rm.fields)}${gwtBadge}</div>`;
+      const fieldsContent = rm.requestFields && rm.requestFields.length
+        ? fieldsHtmlWithSeparator(rm.requestFields, rm.responseFields)
+        : fieldsHtml(rm.fields);
+      content = `<div class="card view-card" style="height:${rm._h}px" data-element="${rm.id}" data-type="view" title="${rm.id} — click to focus, click again to clear"><div class="title">${escapeHtml(rm.name)}</div>${idKeyLinesHtml(rm)}${fieldsContent}${gwtBadge}</div>`;
     }
     midCells += `<td class="lane-cell mid-cell">${content}</td>`;
   });
