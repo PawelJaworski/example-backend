@@ -2,7 +2,6 @@ package pl.pjaworski.examplebackend.infrastructure;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.pjaworski.examplebackend.eventstream.DomainEvent;
@@ -26,7 +25,7 @@ public class EventStreamImpl implements EventStream {
     }
 
     @Override
-    public List<DomainEvent> findAllById(UUID id) {
+    public List<DomainEvent> findAllById(Long id) {
         return repository.findAllByAggregateId(id).stream()
                 .map(DomainEventEntity::toDomainEvent)
                 .toList();

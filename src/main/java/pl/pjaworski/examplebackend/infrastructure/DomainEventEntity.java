@@ -7,8 +7,6 @@ import org.hibernate.type.SqlTypes;
 import pl.pjaworski.examplebackend.domain.events.DomainEventType;
 import pl.pjaworski.examplebackend.eventstream.DomainEvent;
 
-import java.util.UUID;
-
 @Entity
 @Table(name = "domain_event")
 @Getter
@@ -20,7 +18,7 @@ public class DomainEventEntity {
     @Setter
     private Long id;
 
-    private UUID aggregateId;
+    private Long aggregateId;
 
     @Enumerated(EnumType.STRING)
     private DomainEventType type;
